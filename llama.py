@@ -257,15 +257,15 @@ class Llama(LlamaPreTrainedModel):
         return logits, h
 
     @torch.inference_mode()
-    def generate(self, idx, max_new_tokens, temperature=1.0):
+    def generate(self, idx, max_new_tokens, temperature=1.0, top_p=0.9):
         """
         Take a conditioning sequence of indices idx (LongTensor of shape (b,t)) and complete
         the sequence max_new_tokens times, feeding the predictions back into the model each time.
-        We perform this generation using basic temperature sampling. Note that we are not using
-        nucleus sampling (i.e. limiting ourselves to sampling from the top-k most probable tokens
-        at each timestep), though this is often used in conjunction with temperature sampling,
-        Most likely you'll want to make sure to be in model.eval() mode of operation for this.
-        Also note this is a super inefficient version of sampling with no key/value cache.
+        We perform this generation using basic temperature sampling with nucleus sampling (i.e. 
+        limiting ourselves to sampling from the most probable tokens with cumulative probability
+        just less than top_p at each timestep). Most likely you'll want to make sure to be in 
+        model.eval() mode of operation for this. Also note this is a super inefficient version of 
+        sampling with no key/value cache, but you are free to add any optimizations on top of this.
         """
         for _ in range(max_new_tokens):
             # if the sequence context is growing too long we must crop it at block_size
@@ -281,13 +281,12 @@ class Llama(LlamaPreTrainedModel):
                 idx_next = None
             else:
                 '''
-                Perform temperature sampling:
-                1) identify  the logits at the final step.
-                2) scale (divide) these probabilities by the given temperature.
-                3) normalize the scaled logits with a softmax to obtain scaled probabilities.
-                4) sample from the scaled probability distribution.
-
-                Note that we are not using top-k sampling/nucleus sampling in this procedure.
+                Perform temperature sampling with top-p (nucleus) sampling:
+                1) Scale the logits with the temperature followed by normalization using Softmax.
+                2) Sort the tokens according to their normalized logits
+                3) Identify the tokens within the top-p cumulative. Make sure to handle any edge cases here. 
+                4) Filter and normalize the resulting probabilities.
+                5) Sample from this scaled probability distribution.
                 '''
                 idx_next = None
             # append sampled index to the running sequence and continue
