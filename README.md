@@ -1,5 +1,5 @@
 # Min-Llama Assignment
-by Vijay Viswanathan (based on the previous [minbert-assignment](https://github.com/neubig/minbert-assignment))
+Acknowledgement: This assignment is based on the corresping assignment of Fall 2024 offering, by Vijay Viswanathan (based on the previous [minbert-assignment](https://github.com/neubig/minbert-assignment))
 
 This is an exercise in developing a minimalist version of Llama2, part of Carnegie Mellon University's [CS11-711 Advanced NLP](http://phontron.com/class/anlp2024/).
 
@@ -71,6 +71,9 @@ You will submit a full code package, with output files, on **Canvas**. This pack
 
 **Report (optional):** Your zip file can include a pdf file, named ANDREWID-report.pdf, if (1) you've implemented something else on top of the requirements and further improved accuracy for possible extra points (see "Grading" below), and/or (2) if your best results are with some hyperparameters other than the default, and you want to specify how we should run your code. If you're doing (1), we expect your report should be 1-2 pages, but no more than 3 pages. If you're doing (2), the report can be very brief.
 
+**Feedback (optional):**
+We also request you to provide your feedback (in a feedback.txt file) to improve the course assignments for the future offerings. Possible points could be (a) how easy/difficult you found this assignment?; (b) what component of the assignment was hard to understand?; (c) anything we can improve for the future offerings?
+
 #### Canvas Submission
 
 For submission via [Canvas](https://canvas.cmu.edu/),
@@ -103,6 +106,7 @@ ANDREWID/
 ├── [OPTIONAL] cfimdb-test-advanced-output.txt
 ├── cfimdb-dev-prompting-output.txt
 ├── cfimdb-test-prompting-output.txt
+├── [OPTIONAL] feedback.txt
 ├── cfimdb-dev-finetuning-output.txt
 ├── cfimdb-test-finetuning-output.txt
 └── setup.sh
