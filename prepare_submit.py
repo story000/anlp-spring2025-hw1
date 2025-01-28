@@ -25,7 +25,8 @@ required_files = {'run_llama.py',
 optional_files = {'sst-dev-advanced-output.txt',
                   'sst-test-advanced-output.txt',
                   'cfimdb-dev-advanced-output.txt',
-                  'cfimdb-test-advanced-output.txt'}
+                  'cfimdb-test-advanced-output.txt',
+                  'feedback.txt'}
 
 def check_file(file: str, check_aid: str):
     global required_files
