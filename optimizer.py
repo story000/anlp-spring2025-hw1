@@ -33,7 +33,7 @@ class AdamW(Optimizer):
 
         for group in self.param_groups:
 
-            # TODO: Clip gradients (in 'grad') if max_grad_norm is set
+            # TODO: Clip gradients if max_grad_norm is set
             if group['max_grad_norm'] is not None:
                 raise NotImplementedError()
             
