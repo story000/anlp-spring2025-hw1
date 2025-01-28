@@ -32,6 +32,11 @@ class AdamW(Optimizer):
             loss = closure()
 
         for group in self.param_groups:
+
+            # TODO: Clip gradients (in 'grad') if max_grad_norm is set
+            if group['max_grad_norm'] is not None:
+                raise NotImplementedError()
+            
             for p in group["params"]:
                 if p.grad is None:
                     continue
@@ -40,24 +45,22 @@ class AdamW(Optimizer):
                     raise RuntimeError("Adam does not support sparse gradients, please consider SparseAdam instead")
 
                 raise NotImplementedError()
-            
-                # Clip gradients (in 'grad') if max_grad_norm is set
 
                 # State should be stored in this dictionary
                 state = self.state[p]
 
-                # Access hyperparameters from the `group` dictionary
+                # TODO: Access hyperparameters from the `group` dictionary
                 alpha = group["lr"]
 
-                # Update first and second moments of the gradients
+                # TODO: Update first and second moments of the gradients
 
-                # Bias correction
+                # TODO: Bias correction
                 # Please note that we are using the "efficient version" given in
                 # https://arxiv.org/abs/1412.6980
 
-                # Update parameters
+                # TODO: Update parameters
 
-                # Add weight decay after the main gradient-based updates.
+                # TODO: Add weight decay after the main gradient-based updates.
                 # Please note that the learning rate should be incorporated into this update.
 
         return loss
