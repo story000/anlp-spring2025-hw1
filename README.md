@@ -1,7 +1,7 @@
 # Min-Llama Assignment
-Acknowledgement: This assignment is based on the corresping assignment of Fall 2024 offering, by Vijay Viswanathan (based on the previous [minbert-assignment](https://github.com/neubig/minbert-assignment))
+Acknowledgement: This assignment is based on the corresponding assignment of Fall 2024 offering, and the previous version by Vijay Viswanathan (based on the previous [minbert-assignment](https://github.com/neubig/minbert-assignment))
 
-This is an exercise in developing a minimalist version of Llama2, part of Carnegie Mellon University's [CS11-711 Advanced NLP](http://phontron.com/class/anlp2024/).
+This is an exercise in developing a minimalist version of Llama2, part of Carnegie Mellon University's [CS11-711 Advanced NLP](https://cmu-l3.github.io/anlp-spring2025/).
 
 In this assignment, you will implement some important components of the Llama2 model to better understanding its architecture. 
 You will then perform sentence classification on ``sst`` dataset and ``cfimdb`` dataset with this model.
@@ -9,7 +9,7 @@ You will then perform sentence classification on ``sst`` dataset and ``cfimdb`` 
 ## Assignment Details
 
 ### Your task
-The code to implement can be found in `llama.py`, `classifier.py` and `optimizer.py`. You are reponsible for writing _core components_ of Llama2 (one of the leading open source language models). In doing so, you will gain a strong understanding of neural language modeling. We will load pretrained weights for your language model from `stories42M.pt`; an 8-layer, 42M parameter language model pretrained on the [TinyStories](https://arxiv.org/abs/2305.07759) dataset (a dataset of machine-generated children's stories). This model is small enough that it can be trained (slowly) without a GPU. You are encouraged to use Colab or a personal GPU machine (e.g. a Macbook) to be able to iterate more quickly.
+The code to implement can be found in `llama.py`, `classifier.py`, `optimizer.py` and `rope.py`. You are reponsible for writing _core components_ of Llama2 (one of the leading open source language models). In doing so, you will gain a strong understanding of neural language modeling. We will load pretrained weights for your language model from `stories42M.pt`; an 8-layer, 42M parameter language model pretrained on the [TinyStories](https://arxiv.org/abs/2305.07759) dataset (a dataset of machine-generated children's stories). This model is small enough that it can be trained (slowly) without a GPU. You are encouraged to use Colab or a personal GPU machine (e.g. a Macbook) to be able to iterate more quickly.
 
 Once you have implemented these components, you will test our your model in 3 settings:
 1) Generate a text completion (starting with the sentence `"I have wanted to see this thriller for a while, and it didn't disappoint. Keanu Reeves, playing the hero John Wick, is"`). You should see coherent, grammatical English being generated (though the content and topicality of the completion may be absurd, since this LM was pretrained exclusively on children's stories).
@@ -18,7 +18,7 @@ Once you have implemented these components, you will test our your model in 3 se
 4) If you've done #1-3 well, you will get an A! However, since you've come this far, try implementing something new on top of your hand-written language modeling system! If your method provides strong empirical improvements or demonstrates exceptional creativity, you'll get an A+ on this assignment.
 
 ### Important Notes
-* Follow `setup.sh` to properly setup the environment and install dependencies.
+* Follow `setup.sh` to properly setup the environment, install dependencies and model weights.
 * There is a detailed description of the code structure in [structure.md](./structure.md), including a description of which parts you will need to implement.
 * You are only allowed to use libraries that are installed by `setup.sh`, no other external libraries are allowed (e.g., `transformers`).
 * The `data/cfimdb-test.txt` file provided to you does **not** contain gold-labels, and contains a placeholder negative (-1) label. Evaluating your code against this set will show lower accuracies so do not worry if the numbers don't make sense.
@@ -61,7 +61,7 @@ Finetuning for CFIMDB:
 Dev Accuracy: 0.800 (0.115)
 Test Accuracy: -
 
-Mean reference accuracies over 10 random seeds with their standard deviation shown in brackets.
+Mean reference accuracies over 10 random seeds with their standard deviation shown in brackets. Gradient clipping was NOT employed for obtaining these numbers.
 
 ### Submission
 
@@ -132,6 +132,7 @@ students lose a 1/3 letter grade because of an improper submission format.
     * enable zero-shot prompting using a more principled inference algorithm than our current implementation. For example, we did not include an attention mask despite right-padding all inputs (to enable batch prediction); this could be improved.
     * perform [prompt-based finetuning](https://arxiv.org/abs/2109.01247)
     * add [regularization](https://arxiv.org/abs/1909.11299) to our finetuning process
+    * try other variants of positional encodings (or potential [replacements](https://arxiv.org/pdf/2108.12409).) that consistently improve the current model's performance
     * try parameter-efficient finetuning (see Section 2.2 [here](https://arxiv.org/abs/2110.04366) for an overview)
     * try alternative fine-tuning algorithms e.g. [SMART](https://www.aclweb.org/anthology/2020.acl-main.197) or [WiSE-FT](https://arxiv.org/abs/2109.01903)
     * add other model components on top of the model
