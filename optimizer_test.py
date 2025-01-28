@@ -14,6 +14,7 @@ def test_optimizer(opt_class) -> torch.Tensor:
         lr=1e-3,
         weight_decay=1e-4,
         correct_bias=True,
+        max_grad_norm=0.9,
     )
     for i in range(1000):
         opt.zero_grad()
