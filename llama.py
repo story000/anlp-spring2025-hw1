@@ -44,7 +44,7 @@ class RMSNorm(torch.nn.Module):
             torch.Tensor: The normalized tensor.
         """
         # todo
-        raise NotImplementedError
+        return x * torch.rsqrt(x.pow(2).mean(-1, keepdim=True) + self.eps)
 
     def forward(self, x):
         """
@@ -93,8 +93,13 @@ class Attention(nn.Module):
         Make sure to use attention_dropout (self.attn_dropout) on the computed
         attention matrix before applying it to the value tensor.
         '''
+        
         # todo
-        raise NotImplementedError
+        query = query / math.sqrt(self.head_dim)
+        query = query @ key.transpose(-2, -1)
+        attention = self.attn_dropout(query)
+        attention = nn.functional.softmax(attention, dim=-1)
+        return attention @ value
 
     def forward(
         self,
@@ -197,7 +202,11 @@ class LlamaLayer(nn.Module):
            output of the feed-forward network
         '''
         # todo
-        raise NotImplementedError
+        atn_norm = self.attention_norm(x)
+        atn = self.attention(atn_norm) + x
+        ffn_norm = self.ffn_norm(atn)
+        ffn = self.feed_forward(ffn_norm) + atn
+        return ffn
 
 class Llama(LlamaPreTrainedModel):
     def __init__(self, config: LlamaConfig):
@@ -274,11 +283,10 @@ class Llama(LlamaPreTrainedModel):
             logits, _ = self(idx_cond)
             logits = logits[:, -1, :] # crop to just the final time step
             # todo
-            raise NotImplementedError
 
             if temperature == 0.0:
                 # select the single most likely index
-                idx_next = None
+                idx_next = torch.argmax(logits, dim=-1, keepdim=True)
             else:
                 '''
                 Perform temperature sampling with top-p (nucleus) sampling:
@@ -288,10 +296,28 @@ class Llama(LlamaPreTrainedModel):
                 4) Filter and normalize the resulting probabilities.
                 5) Sample from this scaled probability distribution.
                 '''
-                idx_next = None
-            # append sampled index to the running sequence and continue
-            idx = torch.cat((idx, idx_next), dim=1)
+                # Temperature scaling and top-p sampling
+                scaled_logits = logits / temperature
+                probs = torch.nn.functional.softmax(scaled_logits, dim=-1)
 
+                # Sort probabilities
+                sorted_probs, sorted_indices = torch.sort(probs, descending=True, dim=-1)
+                cumulative_probs = torch.cumsum(sorted_probs, dim=-1)
+
+                # Apply top-p filtering
+                sorted_mask = cumulative_probs > top_p
+                sorted_mask[:, 0] = False  # Always keep at least one token
+                sorted_probs[sorted_mask] = 0.0
+
+                # Re-normalise and sample
+                filtered_probs = sorted_probs / sorted_probs.sum(dim=-1, keepdim=True)
+                idx_next = torch.multinomial(filtered_probs, num_samples=1)
+
+                # Restore the original token order
+                idx_next = sorted_indices.gather(1, idx_next)
+
+                # append sampled index to the running sequence and continue
+            idx = torch.cat((idx, idx_next), dim=1)
 
         return idx
 
